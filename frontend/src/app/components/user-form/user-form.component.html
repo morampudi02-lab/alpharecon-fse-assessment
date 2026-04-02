@@ -7,7 +7,7 @@
 
     <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-    <form (ngSubmit)="onSubmit()">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)">
       <div class="form-group">
         <label for="firstName">First Name</label>
         <input
@@ -55,7 +55,7 @@
         <button type="button" class="btn-secondary" (click)="onCancel()">
           Cancel
         </button>
-        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting || f.invalid">
           {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update User' : 'Create User' }}
         </button>
       </div>
