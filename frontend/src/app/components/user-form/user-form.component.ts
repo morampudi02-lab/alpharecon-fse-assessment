@@ -68,4 +68,9 @@ export class UserFormComponent implements OnInit {
   onCancel(): void {
     this.cancelled.emit();
   }
+
+  /** Used when the template binds `(click)="cancel()"` (e.g. overlay dismiss). */
+  cancel(): void {
+    this.onCancel();
+  }
 }
