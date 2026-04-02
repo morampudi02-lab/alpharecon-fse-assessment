@@ -21,7 +21,7 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const httpMock = TestBed.inject(HttpTestingController);
-    httpMock.expectOne('http://localhost:8080/api/v1/users').flush([]);
+    httpMock.expectOne('/api/v1/users').flush([]);
     await fixture.whenStable();
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;

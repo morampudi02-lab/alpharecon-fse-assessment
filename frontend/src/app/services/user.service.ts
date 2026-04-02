@@ -7,7 +7,8 @@ import { User } from '../models/user.model';
   providedIn: 'root',
 })
 export class UserService {
-  private readonly apiUrl = 'http://localhost:8080/api/v1/users';
+  /** Use relative URL in dev so `ng serve` proxies to Spring Boot (see proxy.conf.json). */
+  private readonly apiUrl = '/api/v1/users';
 
   constructor(private http: HttpClient) {}
 
