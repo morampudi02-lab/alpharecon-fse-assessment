@@ -3,14 +3,42 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 
+/** Shape Spring expects for POST/PUT (no id or timestamps). */
+export interface UserWritePayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  note?: string;
+}
+
+/** During `ng serve` (port 4200), call Spring directly so the app works even if the dev proxy is not applied. */
+function resolveUsersApiUrl(): string {
+  if (typeof globalThis === 'undefined' || !('location' in globalThis)) {
+    return '/api/v1/users';
+  }
+  const loc = globalThis.location as Location;
+  if (loc.port === '4200') {
+    return `${loc.protocol}//127.0.0.1:8080/api/v1/users`;
+  }
+  return '/api/v1/users';
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  /** Use relative URL in dev so `ng serve` proxies to Spring Boot (see proxy.conf.json). */
-  private readonly apiUrl = '/api/v1/users';
+  private readonly apiUrl = resolveUsersApiUrl();
 
   constructor(private http: HttpClient) {}
+
+  private toWritePayload(user: User): UserWritePayload {
+    return {
+      firstName: (user.firstName ?? '').trim(),
+      lastName: (user.lastName ?? '').trim(),
+      email: (user.email ?? '').trim(),
+      note: user.note?.trim() || undefined,
+    };
+  }
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
@@ -21,11 +49,11 @@ export class UserService {
   }
 
   createUser(user: User): Observable<User> {
-    return this.http.post<User>(this.apiUrl, user);
+    return this.http.post<User>(this.apiUrl, this.toWritePayload(user));
   }
 
   updateUser(id: number, user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
+    return this.http.put<User>(`${this.apiUrl}/${id}`, this.toWritePayload(user));
   }
 
   deleteUser(id: number): Observable<void> {
