@@ -32,7 +32,7 @@
     </tbody>
   </table>
 
-  <div *ngIf="!isLoading && users.length === 0" class="empty-state">
+  <div *ngIf="!isLoading && users.length === 0 && !errorMessage" class="empty-state">
     No users found. Click "Add User" to get started.
   </div>
 

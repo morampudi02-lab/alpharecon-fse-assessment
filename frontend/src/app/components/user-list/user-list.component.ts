@@ -37,7 +37,7 @@ export class UserListComponent implements OnInit {
         },
         error: () => {
           this.errorMessage =
-            'Failed to load users. Is the backend running on http://localhost:8080?';
+            'Could not load users. Start Spring Boot on port 8080 (backend folder: .\\mvnw.cmd spring-boot:run), then use npm start — the dev server proxies /api to localhost:8080.';
         },
       });
   }
