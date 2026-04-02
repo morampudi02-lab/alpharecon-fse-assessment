@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="header">
+    <h1>User Management</h1>
+    <button type="button" class="btn-primary" (click)="openCreateForm()">+ Add User</button>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="loading" *ngIf="isLoading">Loading users...</div>
+
+  <table *ngIf="!isLoading && users.length > 0">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Note</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.firstName }}</td>
+        <td>{{ user.lastName }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.note || '—' }}</td>
+        <td class="actions">
+          <button type="button" class="btn-edit" (click)="openEditForm(user)">Edit</button>
+          <button type="button" class="btn-delete" (click)="deleteUser(user.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!isLoading && users.length === 0" class="empty-state">
+    No users found. Click "Add User" to get started.
+  </div>
+
+  <app-user-form
+    *ngIf="showForm"
+    [user]="selectedUser"
+    (saved)="onFormSaved()"
+    (cancelled)="onFormCancelled()">
+  </app-user-form>
+</div>
