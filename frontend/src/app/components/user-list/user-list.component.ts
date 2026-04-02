@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -26,16 +27,19 @@ export class UserListComponent implements OnInit {
 
   loadUsers(): void {
     this.isLoading = true;
-    this.userService.getAllUsers().subscribe({
-      next: (users) => {
-        this.users = users;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load users.';
-        this.isLoading = false;
-      },
-    });
+    this.errorMessage = '';
+    this.userService
+      .getAllUsers()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (users) => {
+          this.users = users;
+        },
+        error: () => {
+          this.errorMessage =
+            'Failed to load users. Is the backend running on http://localhost:8080?';
+        },
+      });
   }
 
   openCreateForm(): void {
