@@ -1,30 +1,64 @@
-<div class="backdrop" (click)="cancel()" aria-hidden="true"></div>
-<div class="panel" role="dialog" aria-labelledby="form-title">
-  <h2 id="form-title">{{ user?.id != null ? 'Edit User' : 'Add User' }}</h2>
-
-  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
-
-  <form (ngSubmit)="submit()">
-    <label>
-      First name
-      <input name="firstName" [(ngModel)]="formModel.firstName" required />
-    </label>
-    <label>
-      Last name
-      <input name="lastName" [(ngModel)]="formModel.lastName" required />
-    </label>
-    <label>
-      Email
-      <input name="email" type="email" [(ngModel)]="formModel.email" required />
-    </label>
-    <label>
-      Note
-      <textarea name="note" rows="3" [(ngModel)]="formModel.note"></textarea>
-    </label>
-
-    <div class="actions">
-      <button type="submit" class="btn-save">Save</button>
-      <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+<div class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Edit User' : 'Create User' }}</h2>
+      <button type="button" class="btn-close" (click)="onCancel()">✕</button>
     </div>
-  </form>
+
+    <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input
+          id="firstName"
+          type="text"
+          [(ngModel)]="formData.firstName"
+          name="firstName"
+          required
+          placeholder="Enter first name" />
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input
+          id="lastName"
+          type="text"
+          [(ngModel)]="formData.lastName"
+          name="lastName"
+          required
+          placeholder="Enter last name" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="formData.email"
+          name="email"
+          required
+          placeholder="Enter email address" />
+      </div>
+
+      <div class="form-group">
+        <label for="note">Note</label>
+        <textarea
+          id="note"
+          [(ngModel)]="formData.note"
+          name="note"
+          rows="4"
+          placeholder="Enter a note (optional)"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : isEditMode ? 'Update User' : 'Create User' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
