@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 
-/** Shape Spring expects for POST/PUT (no id or timestamps). */
 export interface UserWritePayload {
   firstName: string;
   lastName: string;
@@ -11,7 +10,6 @@ export interface UserWritePayload {
   note?: string;
 }
 
-/** During `ng serve` (port 4200), call Spring directly so the app works even if the dev proxy is not applied. */
 function resolveUsersApiUrl(): string {
   if (typeof globalThis === 'undefined' || !('location' in globalThis)) {
     return '/api/v1/users';

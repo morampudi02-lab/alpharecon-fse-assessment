@@ -48,7 +48,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     }
   }
 
-  /** Inputs are not always set before the first ngOnInit; keep mode + form in sync. */
   private syncFromUserInput(): void {
     if (this.user != null && this.user.id != null) {
       this.isEditMode = true;
@@ -107,7 +106,6 @@ export class UserFormComponent implements OnInit, OnChanges {
     this.cancelled.emit();
   }
 
-  /** Used when the template binds `(click)="cancel()"` (e.g. overlay dismiss). */
   cancel(): void {
     this.onCancel();
   }
