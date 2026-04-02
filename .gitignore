@@ -1,0 +1,34 @@
+# ===========================
+# Java / Spring Boot
+# ===========================
+backend/target/
+backend/.gradle/
+backend/build/
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/.mvn/
+backend/mvnw
+backend/gradlew
+*.iml
+.idea/
+
+# ===========================
+# Angular / Node
+# ===========================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.env
+
+# ===========================
+# OS
+# ===========================
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Environment
+# ===========================
+*.env
+.env.local
