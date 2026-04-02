@@ -1,6 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.model';
 
@@ -11,7 +20,7 @@ import { User } from '../../models/user.model';
   templateUrl: './user-form.component.html',
   styleUrls: ['./user-form.component.css'],
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent implements OnInit, OnChanges {
   @Input() user: User | null = null;
   @Output() saved = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
@@ -30,24 +39,43 @@ export class UserFormComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    if (this.user) {
-      this.isEditMode = true;
-      this.formData = { ...this.user };
+    this.syncFromUserInput();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['user']) {
+      this.syncFromUserInput();
     }
   }
 
-  onSubmit(): void {
-    this.isSubmitting = true;
-    this.errorMessage = '';
+  /** Inputs are not always set before the first ngOnInit; keep mode + form in sync. */
+  private syncFromUserInput(): void {
+    if (this.user != null && this.user.id != null) {
+      this.isEditMode = true;
+      this.formData = { ...this.user };
+    } else {
+      this.isEditMode = false;
+      this.formData = { firstName: '', lastName: '', email: '', note: '' };
+    }
+  }
 
-    if (this.isEditMode && this.user?.id) {
+  onSubmit(form: NgForm): void {
+    this.errorMessage = '';
+    if (form.invalid) {
+      this.errorMessage = 'Please fill in all required fields.';
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    if (this.isEditMode && this.user != null && this.user.id != null) {
       this.userService.updateUser(this.user.id, this.formData).subscribe({
         next: () => {
           this.isSubmitting = false;
           this.saved.emit();
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || 'Failed to update user.';
+          this.errorMessage = this.apiErrorMessage(err, 'Failed to update user.');
           this.isSubmitting = false;
         },
       });
@@ -58,11 +86,21 @@ export class UserFormComponent implements OnInit {
           this.saved.emit();
         },
         error: (err) => {
-          this.errorMessage = err.error?.message || 'Failed to create user.';
+          this.errorMessage = this.apiErrorMessage(err, 'Failed to create user.');
           this.isSubmitting = false;
         },
       });
     }
+  }
+
+  private apiErrorMessage(err: unknown, fallback: string): string {
+    if (err instanceof HttpErrorResponse && err.error && typeof err.error === 'object') {
+      const msg = (err.error as { message?: string }).message;
+      if (typeof msg === 'string' && msg.length > 0) {
+        return msg;
+      }
+    }
+    return fallback;
   }
 
   onCancel(): void {
